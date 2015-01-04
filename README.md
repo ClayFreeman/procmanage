@@ -29,7 +29,7 @@ pipes.
 const envp[])` - Creates a `Process` object with the given path.  `argv` and
 `envp` are optional parameters (just use `NULL`).
 * `void process_free(struct Process* p)` - Destroys a `Process` object.
-* `int process_open(struct Process* p)` - Launches a Process object.
+* `int process_open(struct Process* p)` - Launches a `Process` object.
 
 #### Examples
 
