@@ -30,14 +30,20 @@ const envp[])` - Creates a `Process` object with the given path.  `argv` and
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include "procmanage.h"
+#include "procmanage/procmanage.h"
+
+#ifdef __APPLE__
+#define BINARY "/sbin/ping"
+#elif
+#define BINARY "/bin/ping"
+#endif
 
 int main() {
   // Setup storage for read buffer
   char* buf      = calloc(1025, sizeof(char));
 
   // Create a process object (automatically sets first argument to binary)
-  struct Process* p = process_create("/sbin/ping", NULL, NULL);
+  struct Process* p = process_create(BINARY, NULL, NULL);
   // Add arguments to Process object
   process_add_arg(p, "-c");
   process_add_arg(p, "4");
