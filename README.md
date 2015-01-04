@@ -14,8 +14,15 @@ header.  All of the interface methods should become available to you.
 
 * `void process_add_arg(struct Process* p, const char* arg)` - Appends an
 argument to the argument list.
+`void process_add_args(struct Process* p, char* const args[])` - Appends
+multiple arguments to the argument list.
 * `void process_add_env(struct Process* p, const char* env)` - Appends an
 environment variable to the environment variable list.
+`void process_add_envs(struct Process* p, char* const envs[])` - Appends
+multiple environment variables to the environment variable list.
+`void process_clear_argv(struct Process* p)` - Clears the argument list.
+`void process_clear_envp(struct Process* p)` - Clears the environment variable
+list.
 * `void process_close(struct Process* p)` - Kills a `Process` and closes its
 pipes.
 * `struct Process* process_create(const char* path, char* const argv[], char*
@@ -39,8 +46,8 @@ const envp[])` - Creates a `Process` object with the given path.  `argv` and
 #endif
 
 int main() {
-  // argv and envp params must be NULL terminated
-  char* const argv[] = { "-c", "4", NULL };
+  // argv and envp params must be NULL terminated; path should be first argument
+  char* const argv[] = { BINARY, "-c", "4", NULL };
   // Setup storage for read buffer
   char*       buf    = calloc(1025, sizeof(char));
 
@@ -52,6 +59,11 @@ int main() {
   process_open(p);
   // Read data until the Process object closes
   while (read(p->out, buf, 1024) != 0) {
+    printf("%s", buf);
+    buf = calloc(1025, sizeof(char));
+  }
+  // Read data until the Process object closes
+  while (read(p->err, buf, 1024) != 0) {
     printf("%s", buf);
     buf = calloc(1025, sizeof(char));
   }

@@ -36,7 +36,11 @@ struct Process {
 #define _PROCMANAGE_C
 
 extern void process_add_arg(struct Process* p, const char* arg);
+extern void process_add_args(struct Process* p, char* const args[]);
 extern void process_add_env(struct Process* p, const char* env);
+extern void process_add_envs(struct Process* p, char* const envs[]);
+extern void process_clear_argv(struct Process* p);
+extern void process_clear_envp(struct Process* p);
 extern void process_close(struct Process* p);
 extern struct Process* process_create(const char* path, char* const argv[],
   char* const envp[]);

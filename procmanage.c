@@ -15,6 +15,88 @@
 #define _POSIX_SOURCE
 #include "procmanage.h"
 
+// Declare internal function prototypes
+int _process_array_count(char* const arr[]);
+void _process_array_clear(char*** arr);
+void _process_array_push(char*** arr, const char* item);
+void _process_string_copy(char** dest, const char* src);
+
+/**
+ * @brief Process Array Count
+ *
+ * Counts the elements in an array until NULL is reached
+ *
+ * @param arr The array to count
+ *
+ * @return The number of elements in the array
+ */
+int _process_array_count(char* const arr[]) {
+  // Count the variables in arr
+  int arrc = 0;
+  for (; arr != NULL && arr[arrc] != NULL; arrc++);
+  return arrc;
+}
+
+/**
+ * @brief Process Array Clear
+ *
+ * Frees all elements in the array and the array itself
+ *
+ * @remarks
+ * The provided array variable is NULLed
+ *
+ * @param[out] arr The array to clear
+ */
+void _process_array_clear(char*** arr) {
+  if (arr != NULL) {
+    // Free each element
+    for (int i = 0; i < _process_array_count(*arr); i++) {
+      free((*arr)[i]);
+      (*arr)[i] = NULL;
+    }
+    // Free array
+    free(*arr);
+    *arr = NULL;
+  }
+}
+
+/**
+ * @brief Process Array Push
+ *
+ * Grows an array by one element and copies an item into the new position
+ *
+ * @param[out] arr  The array to append an item
+ * @param      item The item to append
+ */
+void _process_array_push(char*** arr, const char* item) {
+  // Count the variables in arr
+  int arrc = _process_array_count(*arr);
+  // Reallocate storage
+  *arr = realloc(*arr, (arrc + 2) * sizeof(char*));
+  // Copy item to new slot
+  _process_string_copy(&((*arr)[arrc]), item);
+  // NULL the last element
+  (*arr)[arrc + 1] = NULL;
+}
+
+/**
+ * @brief Process String Copy
+ *
+ * Copies a string into another location
+ *
+ * @remarks
+ * Allocates new storage for destination
+ *
+ * @param[out] dest The destination pointer
+ * @param      src  The source string
+ */
+void _process_string_copy(char** dest, const char* src) {
+  // Allocate space for src at dest
+  *dest = calloc(strlen(src) + 1, sizeof(char));
+  // Copy src to dest
+  memcpy(*dest, src, strlen(src));
+}
+
 /**
  * @brief Process Add Argument
  *
@@ -24,17 +106,23 @@
  * @param      arg The environment variable to append
  */
 extern void process_add_arg(struct Process* p, const char* arg) {
-  // Count the variables in p->argv
-  int argc = 0;
-  for (; p->argv != NULL && p->argv[argc] != NULL; argc++);
-  // Reallocate storage
-  p->argv = realloc(p->argv, (argc + 2) * sizeof(char*));
-  // Allocate memory for a char* in the new slot
-  p->argv[argc] = calloc(strlen(arg) + 1, sizeof(char));
-  // Copy the provided char* into the new char*
-  memcpy(p->argv[argc], arg, strlen(arg));
-  // NULL the last element
-  p->argv[argc + 1] = NULL;
+  // Push arg on to p->argv
+  _process_array_push(&p->argv, arg);
+}
+
+/**
+ * @brief Process Add Arguments
+ *
+ * Adds arguments to an existing Process
+ *
+ * @param[out] p   The Process object
+ * @param      arg The environment variable to append
+ */
+extern void process_add_args(struct Process* p, char* const args[]) {
+  // Add arguments
+  for (int i = 0; args != NULL && args[i] != NULL; i++) {
+    process_add_arg(p, args[i]);
+  }
 }
 
 /**
@@ -46,17 +134,23 @@ extern void process_add_arg(struct Process* p, const char* arg) {
  * @param      env The environment variable to append
  */
 extern void process_add_env(struct Process* p, const char* env) {
-  // Count the variables in p->envp
-  int envc = 0;
-  for (; p->envp != NULL && p->envp[envc] != NULL; envc++);
-  // Reallocate storage
-  p->envp = realloc(p->envp, (envc + 2) * sizeof(char*));
-  // Allocate memory for a char* in the new slot
-  p->envp[envc] = calloc(strlen(env) + 1, sizeof(char));
-  // Copy the provided char* into the new char*
-  memcpy(p->envp[envc], env, strlen(env));
-  // NULL the last element
-  p->envp[envc + 1] = NULL;
+  // Push env on to p->envp
+  _process_array_push(&p->envp, env);
+}
+
+/**
+ * @brief Process Add Environment Variables
+ *
+ * Adds environment variables to an existing Process
+ *
+ * @param[out] p   The Process object
+ * @param      env The environment variable to append
+ */
+extern void process_add_envs(struct Process* p, char* const envs[]) {
+  // Add environment variables
+  for (int i = 0; envs != NULL && envs[i] != NULL; i++) {
+    process_add_env(p, envs[i]);
+  }
 }
 
 /**
@@ -69,21 +163,10 @@ extern void process_add_env(struct Process* p, const char* env) {
  *
  * @param[out] p The Process object
  */
-void process_clear_argv(struct Process* p) {
+extern void process_clear_argv(struct Process* p) {
   // Free arguments
-  if (p->argv != NULL) {
-    // Count environment variables
-    int argc = 0;
-    for (; p->argv[argc] != NULL; argc++);
-    // Free each environment variable
-    for (int i = 0; i < argc; i++) {
-      free(p->argv[i]);
-      p->argv[i] = NULL;
-    }
-    // Free argument list
-    free(p->argv);
-    p->argv = NULL;
-  }
+  _process_array_clear(&p->argv);
+  p->argv = NULL;
 }
 
 /**
@@ -96,21 +179,10 @@ void process_clear_argv(struct Process* p) {
  *
  * @param[out] p The Process object
  */
-void process_clear_envp(struct Process* p) {
+extern void process_clear_envp(struct Process* p) {
   // Free environment variables
-  if (p->envp != NULL) {
-    // Count environment variables
-    int envc = 0;
-    for (; p->envp[envc] != NULL; envc++);
-    // Free each environment variable
-    for (int i = 0; i < envc; i++) {
-      free(p->envp[i]);
-      p->envp[i] = NULL;
-    }
-    // Free environment variable list
-    free(p->envp);
-    p->envp = NULL;
-  }
+  _process_array_clear(&p->envp);
+  p->envp = NULL;
 }
 
 /**
@@ -175,21 +247,13 @@ extern struct Process* process_create(const char* path, char* const argv[],
   p->pid  = -1;
 
   // Copy the provided path to the Process
-  p->path = calloc(strlen(path) + 1, sizeof(char));
-  memcpy(p->path, path, strlen(path));
-
-  // Add path as first argument
-  process_add_arg(p, path);
+  _process_string_copy(&p->path, path);
 
   // Add arguments
-  for (int i = 0; argv != NULL && argv[i] != NULL; i++) {
-    process_add_arg(p, argv[i]);
-  }
+  process_add_args(p, argv);
 
   // Add environment variables
-  for (int i = 0; envp != NULL && envp[i] != NULL; i++) {
-    process_add_env(p, envp[i]);
-  }
+  process_add_args(p, envp);
 
   return p;
 }
