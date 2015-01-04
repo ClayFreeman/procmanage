@@ -33,12 +33,11 @@ const envp[])` - Creates a `Process` object with the given path.  `argv` and
 #include "procmanage.h"
 
 int main() {
-  // Setup variable for binary and read buffer
-  char  binary[] = "/sbin/ping";
+  // Setup storage for read buffer
   char* buf      = calloc(1025, sizeof(char));
 
   // Create a process object (automatically sets first argument to binary)
-  struct Process* p = process_create(binary, NULL, NULL);
+  struct Process* p = process_create("/sbin/ping", NULL, NULL);
   // Add arguments to Process object
   process_add_arg(p, "-c");
   process_add_arg(p, "4");
