@@ -27,31 +27,14 @@ extern void process_add_arg(struct Process* p, const char* arg) {
   // Count the variables in p->argv
   int argc = 0;
   for (; p->argv != NULL && p->argv[argc] != NULL; argc++);
-
-  char** old = p->argv;
-  // Allocate storage
-  p->argv = calloc(argc + 2, sizeof(char*));
-  // Copy the provided arguments to the Process
-  for (int i = 0; i < argc; i++) {
-    // Allocate memory for the new argument
-    p->argv[i]     = calloc(strlen(old[i]) + 1, sizeof(char));
-    // Set the last element to NULL
-    p->argv[i + 1] = NULL;
-    // Copy argument to the newly allocated slot
-    memcpy(p->argv[i], old[i], strlen(old[i]));
-    // Free old memory
-    free(old[i]);
-    old[i] = NULL;
-  }
-  // Free old memory
-  if (old != NULL) free(old);
-  old = NULL;
-
+  // Reallocate storage
+  p->argv = realloc(p->argv, (argc + 2) * sizeof(char*));
   // Allocate memory for a char* in the new slot
   p->argv[argc] = calloc(strlen(arg) + 1, sizeof(char));
   // Copy the provided char* into the new char*
   memcpy(p->argv[argc], arg, strlen(arg));
-  return;
+  // NULL the last element
+  p->argv[argc + 1] = NULL;
 }
 
 /**
@@ -66,31 +49,14 @@ extern void process_add_env(struct Process* p, const char* env) {
   // Count the variables in p->envp
   int envc = 0;
   for (; p->envp != NULL && p->envp[envc] != NULL; envc++);
-
-  char** old = p->envp;
-  // Allocate storage
-  p->envp = calloc(envc + 2, sizeof(char*));
-  // Copy the provided arguments to the Process
-  for (int i = 0; i < envc; i++) {
-    // Allocate memory for the new argument
-    p->envp[i]     = calloc(strlen(old[i]) + 1, sizeof(char));
-    // Set the last element to NULL
-    p->envp[i + 1] = NULL;
-    // Copy argument to the newly allocated slot
-    memcpy(p->envp[i], old[i], strlen(old[i]));
-    // Free old memory
-    free(old[i]);
-    old[i] = NULL;
-  }
-  // Free old memory
-  if (old != NULL) free(old);
-  old = NULL;
-
+  // Reallocate storage
+  p->envp = realloc(p->envp, (envc + 2) * sizeof(char*));
   // Allocate memory for a char* in the new slot
   p->envp[envc] = calloc(strlen(env) + 1, sizeof(char));
   // Copy the provided char* into the new char*
   memcpy(p->envp[envc], env, strlen(env));
-  return;
+  // NULL the last element
+  p->envp[envc + 1] = NULL;
 }
 
 /**
