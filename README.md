@@ -34,7 +34,7 @@ const envp[])` - Creates a `Process` object with the given path.  `argv` and
 
 #ifdef __APPLE__
 #define BINARY "/sbin/ping"
-#elif
+#else
 #define BINARY "/bin/ping"
 #endif
 
