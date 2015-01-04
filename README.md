@@ -39,14 +39,14 @@ const envp[])` - Creates a `Process` object with the given path.  `argv` and
 #endif
 
 int main() {
+  // argv and envp params must be NULL terminated
+  char* const argv[] = { "-c", "4", NULL };
   // Setup storage for read buffer
-  char* buf      = calloc(1025, sizeof(char));
+  char*       buf    = calloc(1025, sizeof(char));
 
   // Create a process object (automatically sets first argument to binary)
-  struct Process* p = process_create(BINARY, NULL, NULL);
-  // Add arguments to Process object
-  process_add_arg(p, "-c");
-  process_add_arg(p, "4");
+  struct Process* p = process_create(BINARY, argv, NULL);
+  // Add argument to Process object
   process_add_arg(p, "google.com");
   // Launch the Process object
   process_open(p);
