@@ -14,20 +14,20 @@ header.  All of the interface methods should become available to you.
 
 * `void process_add_arg(struct Process* p, const char* arg)` - Appends an
 argument to the argument list.
-`void process_add_args(struct Process* p, char* const args[])` - Appends
+* `void process_add_args(struct Process* p, char* const args[])` - Appends
 multiple arguments to the argument list.
 * `void process_add_env(struct Process* p, const char* env)` - Appends an
 environment variable to the environment variable list.
-`void process_add_envs(struct Process* p, char* const envs[])` - Appends
+* `void process_add_envs(struct Process* p, char* const envs[])` - Appends
 multiple environment variables to the environment variable list.
-`void process_clear_argv(struct Process* p)` - Clears the argument list.
-`void process_clear_envp(struct Process* p)` - Clears the environment variable
+* `void process_clear_argv(struct Process* p)` - Clears the argument list.
+* `void process_clear_envp(struct Process* p)` - Clears the environment variable
 list.
 * `void process_close(struct Process* p)` - Kills a `Process` and closes its
 pipes.
 * `struct Process* process_create(const char* path, char* const argv[], char*
 const envp[])` - Creates a `Process` object with the given path.  `argv` and
-* `envp` are optional parameters (just use `NULL`).
+`envp` are optional parameters (just use `NULL`).
 * `void process_free(struct Process* p)` - Destroys a `Process` object.
 * `int process_open(struct Process* p)` - Launches a Process object.
 
