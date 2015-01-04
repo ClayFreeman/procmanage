@@ -220,8 +220,8 @@ extern struct Process* process_create(const char* path, char* const argv[],
   }
 
   // Add environment variables
-  for (int i = 0; argv != NULL && argv[i] != NULL; i++) {
-    process_add_arg(p, argv[i]);
+  for (int i = 0; envp != NULL && envp[i] != NULL; i++) {
+    process_add_env(p, envp[i]);
   }
 
   return p;
