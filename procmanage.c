@@ -12,6 +12,7 @@
 #ifndef _PROCMANAGE_C
 #define _PROCMANAGE_C
 
+#define _POSIX_SOURCE
 #include "procmanage.h"
 
 /**
