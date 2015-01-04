@@ -45,7 +45,7 @@ int main() {
   char*       buf    = calloc(1025, sizeof(char));
 
   // Create a process object (automatically sets first argument to binary)
-  struct Process* p = process_create(BINARY, argv, NULL);
+  struct Process* p  = process_create(BINARY, argv, NULL);
   // Add argument to Process object
   process_add_arg(p, "google.com");
   // Launch the Process object
