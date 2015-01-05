@@ -60,12 +60,12 @@ int main() {
   // Read data until the Process object closes
   while (read(p->out, buf, 1024) != 0) {
     printf("%s", buf);
-    buf = calloc(1025, sizeof(char));
+    memset(buf, 0, 1024);
   }
   // Read data until the Process object closes
   while (read(p->err, buf, 1024) != 0) {
     printf("%s", buf);
-    buf = calloc(1025, sizeof(char));
+    memset(buf, 0, 1024);
   }
   // Close the Process object (kill process and close pipes)
   process_close(p);
