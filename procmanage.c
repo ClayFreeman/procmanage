@@ -270,8 +270,8 @@ extern struct Process* process_create(const char* path, char* const argv[],
  */
 extern void process_free(struct Process* p) {
   if (p != NULL) {
-    // Close the process
-    process_close(p);
+    // // Close the process
+    // process_close(p);
 
     // Free path
     if (p->path != NULL) {
