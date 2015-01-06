@@ -322,6 +322,9 @@ extern int process_open(struct Process* p) {
       close(opipe[1]);
       close(epipe[1]);
 
+      // Create session and process group
+      setsid();
+
       // Run command
       execve(p->path, p->argv, p->envp);
 
