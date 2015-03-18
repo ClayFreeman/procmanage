@@ -50,7 +50,8 @@ int _process_array_count(char* const arr[]) {
 void _process_array_clear(char*** arr) {
   if (arr != NULL) {
     // Free each element
-    for (int i = 0; i < _process_array_count(*arr); i++) {
+    int count = _process_array_count(*arr);
+    for (int i = 0; i < count; i++) {
       free((*arr)[i]);
       (*arr)[i] = NULL;
     }
